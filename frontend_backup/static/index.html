@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Proposal Evaluator</title>
+  <meta name="description" content="AI-powered R&D proposal evaluation dashboard with Gemini AI integration">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+
+<div class="app-layout">
+
+  <!-- ==================== SIDEBAR ==================== -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-icon">&#x1F916;</div>
+      <span class="brand-name">ProposalAI</span>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="nav-item active" data-page="dashboard" id="nav-dashboard">
+        <span class="nav-icon">&#x1F4CA;</span>
+        <span>Dashboard</span>
+      </div>
+      <div class="nav-item" data-page="evaluate" id="nav-evaluate">
+        <span class="nav-icon">&#x1F4C4;</span>
+        <span>Evaluate Proposal</span>
+      </div>
+      <div class="nav-item" data-page="results" id="nav-results">
+        <span class="nav-icon">&#x2B50;</span>
+        <span>Results</span>
+      </div>
+      <div class="nav-item" data-page="chat" id="nav-chat">
+        <span class="nav-icon">&#x1F4AC;</span>
+        <span>Reviewer Chat</span>
+      </div>
+      <div class="nav-item" data-page="history" id="nav-history">
+        <span class="nav-icon">&#x1F4DC;</span>
+        <span>Evaluation History</span>
+      </div>
+
+      <div class="nav-divider"></div>
+
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="nav-item" id="nav-settings">
+        <span class="nav-icon">&#x2699;</span>
+        <span>Settings</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ==================== MAIN ==================== -->
+  <main class="main-content">
+
+    <!-- HEADER -->
+    <header class="header">
+      <div class="header-left">
+        <h1 class="header-title" id="page-title">Dashboard</h1>
+      </div>
+      <div class="header-right">
+        <div class="search-box">
+          <span class="search-icon">&#x1F50D;</span>
+          <input type="text" placeholder="Search for anything..." id="search-input">
+        </div>
+        <button class="header-btn" id="notif-btn">
+          &#x1F514;
+          <span class="notif-dot"></span>
+        </button>
+        <div class="user-profile">
+          <div class="user-avatar">RE</div>
+          <div class="user-info">
+            <div class="user-name">Researcher</div>
+            <div class="user-role">Evaluator</div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- CONTENT -->
+    <div class="content-area">
+
+      <!-- ==================== PAGE: DASHBOARD ==================== -->
+      <div class="page active" id="page-dashboard">
+
+        <!-- Stat Cards Row -->
+        <div class="stats-grid" id="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon blue">&#x1F4CB;</div>
+            <div class="stat-value" id="stat-total">0</div>
+            <div class="stat-label">Total Evaluations</div>
+            <div class="stat-trend up">&#x2191; Active</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon green">&#x2B50;</div>
+            <div class="stat-value" id="stat-avg">0.0</div>
+            <div class="stat-label">Average Score</div>
+            <div class="stat-trend up">&#x2191; /100</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon orange">&#x2705;</div>
+            <div class="stat-value" id="stat-approved">0</div>
+            <div class="stat-label">Approved</div>
+            <div class="stat-trend up">&#x2191; Funded</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon purple">&#x1F680;</div>
+            <div class="stat-value" id="stat-latest">--</div>
+            <div class="stat-label">Latest Score</div>
+            <div class="stat-trend up">&#x2191; Recent</div>
+          </div>
+        </div>
+
+        <!-- Dashboard Grid: Table + Donut -->
+        <div class="dashboard-grid">
+
+          <!-- Left: Recent Evaluations Table -->
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <div class="card-title">Recent Evaluations</div>
+                <div class="card-subtitle">Last 10 proposal evaluations</div>
+              </div>
+              <button class="btn btn-primary" onclick="navigateTo('evaluate')">
+                <span>&#x2795;</span> New Evaluation
+              </button>
+            </div>
+            <table class="data-table" id="history-table">
+              <thead>
+                <tr>
+                  <th>Proposal</th>
+                  <th>Score</th>
+                  <th>Status</th>
+                  <th>Progress</th>
+                  <th>Date</th>
+                </tr>
+              </thead>
+              <tbody id="history-tbody">
+                <!-- Populated by JS -->
+              </tbody>
+            </table>
+            <div class="empty-state hidden" id="history-empty">
+              <div class="empty-icon">&#x1F4C2;</div>
+              <div class="empty-title">No evaluations yet</div>
+              <div class="empty-desc">Upload your first R&D proposal to get started with AI evaluation.</div>
+            </div>
+          </div>
+
+          <!-- Right: Overall Scores Donut -->
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <div class="card-title">Overall Progress</div>
+                <div class="card-subtitle">Score distribution</div>
+              </div>
+            </div>
+            <div class="donut-chart-container">
+              <div class="donut-chart" id="donut-chart">
+                <div class="donut-center">
+                  <div class="donut-value" id="donut-value">0%</div>
+                  <div class="donut-label">Avg Score</div>
+                </div>
+              </div>
+              <div class="donut-legend" id="donut-legend">
+                <div class="legend-item">
+                  <span class="legend-color" style="background:#22C55E"></span>
+                  <span class="legend-label">Recommended</span>
+                  <span class="legend-value" id="legend-recommended">0</span>
+                </div>
+                <div class="legend-item">
+                  <span class="legend-color" style="background:#F59E0B"></span>
+                  <span class="legend-label">Revisions</span>
+                  <span class="legend-value" id="legend-revisions">0</span>
+                </div>
+                <div class="legend-item">
+                  <span class="legend-color" style="background:#EF4444"></span>
+                  <span class="legend-label">Not Recommended</span>
+                  <span class="legend-value" id="legend-rejected">0</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ==================== PAGE: EVALUATE ==================== -->
+      <div class="page" id="page-evaluate">
+        <div class="card" style="max-width:720px;">
+          <div class="card-header">
+            <div>
+              <div class="card-title">&#x1F680; Submit Proposal for AI Evaluation</div>
+              <div class="card-subtitle">Upload your R&D proposal PDF for comprehensive analysis</div>
+            </div>
+          </div>
+
+          <form id="eval-form" onsubmit="return false;">
+            <div class="form-group">
+              <label class="form-label">&#x1F4C4; Proposal PDF</label>
+              <div class="upload-zone" id="upload-zone">
+                <span class="upload-icon">&#x2601;</span>
+                <div class="upload-text">Drag & drop your PDF here</div>
+                <div class="upload-subtext">or <span class="upload-browse">browse files</span> &mdash; PDF only, up to 200MB</div>
+                <input type="file" id="file-input" accept=".pdf">
+              </div>
+              <div class="file-selected hidden" id="file-selected">
+                <span class="file-sel-icon">&#x1F4CE;</span>
+                <span class="file-sel-name" id="file-sel-name"></span>
+                <span class="file-sel-remove" id="file-sel-remove">&times;</span>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">&#x1F4B0; Proposed Budget (&#x20B9;)</label>
+              <input type="number" class="form-input" id="budget-input"
+                     placeholder="Enter budget amount"
+                     min="100000" max="500000000" step="50000" value="100000">
+              <div class="form-hint">Budget range: &#x20B9;1,00,000 to &#x20B9;50,00,00,000</div>
+            </div>
+
+            <button type="button" class="btn btn-primary btn-lg btn-block" id="submit-btn" onclick="submitProposal()">
+              <span>&#x1F680;</span> Run AI Evaluation
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- ==================== PAGE: RESULTS ==================== -->
+      <div class="page" id="page-results">
+
+        <!-- Decision Banner -->
+        <div class="decision-banner" id="decision-banner">
+          <span id="decision-icon">&#x2B50;</span>
+          <span id="decision-text">No evaluation results yet</span>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs" id="result-tabs">
+          <button class="tab-btn active" data-tab="tab-overview">&#x1F4CA; Overview</button>
+          <button class="tab-btn" data-tab="tab-novelty">&#x1F50D; Novelty</button>
+          <button class="tab-btn" data-tab="tab-finance">&#x26A0; Finance</button>
+          <button class="tab-btn" data-tab="tab-narrative">&#x1F916; AI Narrative</button>
+          <button class="tab-btn" data-tab="tab-report">&#x1F4C4; Report</button>
+        </div>
+
+        <!-- Tab: Overview -->
+        <div class="tab-content active" id="tab-overview">
+          <div class="scores-grid" id="scores-grid">
+            <div class="score-card">
+              <div class="score-ring" id="ring-final">
+                <div class="score-ring-inner">
+                  <span class="score-number" id="score-final">--</span>
+                </div>
+              </div>
+              <div class="score-title">Final Score</div>
+              <div class="score-desc">Overall evaluation</div>
+            </div>
+            <div class="score-card">
+              <div class="score-ring" id="ring-novelty">
+                <div class="score-ring-inner">
+                  <span class="score-number" id="score-novelty">--</span>
+                </div>
+              </div>
+              <div class="score-title">Novelty Score</div>
+              <div class="score-desc">Research uniqueness</div>
+            </div>
+            <div class="score-card">
+              <div class="score-ring" id="ring-finance">
+                <div class="score-ring-inner">
+                  <span class="score-number" id="score-finance">--</span>
+                </div>
+              </div>
+              <div class="score-title">Finance Score</div>
+              <div class="score-desc">Budget compliance</div>
+            </div>
+          </div>
+
+          <!-- Confidence -->
+          <div class="confidence-info" id="confidence-info">
+            &#x1F4CA; Confidence: <strong id="conf-value">--</strong>% &nbsp;|&nbsp;
+            Score Range: <strong id="conf-low">--</strong> &ndash; <strong id="conf-high">--</strong>
+          </div>
+        </div>
+
+        <!-- Tab: Novelty -->
+        <div class="tab-content" id="tab-novelty">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">&#x1F50D; Similar Past Research Projects</div>
+            </div>
+            <div id="similar-projects-list">
+              <!-- Populated by JS -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab: Finance -->
+        <div class="tab-content" id="tab-finance">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">&#x26A0; Financial Compliance Check</div>
+            </div>
+            <div id="violations-list">
+              <!-- Populated by JS -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab: AI Narrative -->
+        <div class="tab-content" id="tab-narrative">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">&#x1F916; AI Evaluation Narrative</div>
+            </div>
+            <div class="narrative-text" id="narrative-text">
+              No narrative generated yet. Submit a proposal first.
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab: Report -->
+        <div class="tab-content" id="tab-report">
+          <div class="card" style="text-align:center; padding:48px;">
+            <div style="font-size:64px; margin-bottom:16px;">&#x1F4C4;</div>
+            <div class="card-title" style="font-size:20px; margin-bottom:8px;">Download Evaluation Report</div>
+            <div class="card-subtitle" style="margin-bottom:28px;">Complete AI-generated PDF report with all scores and analysis</div>
+            <a class="download-btn" id="report-download-btn" href="#" target="_blank">
+              <span>&#x2B07;</span> Download PDF Report
+            </a>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ==================== PAGE: CHAT ==================== -->
+      <div class="page" id="page-chat">
+        <div class="card" style="height:calc(100vh - 160px); display:flex; flex-direction:column;">
+          <div class="card-header">
+            <div>
+              <div class="card-title">&#x1F916; Reviewer Agent Chat</div>
+              <div class="card-subtitle">Ask questions about your proposal evaluation</div>
+            </div>
+          </div>
+
+          <div class="chat-container">
+            <div class="chat-messages" id="chat-messages">
+              <div class="chat-empty" id="chat-empty">
+                <div class="chat-empty-icon">&#x1F4AC;</div>
+                <p>Ask a question about your evaluation</p>
+                <p style="font-size:12px">e.g. "Why is my score low?" or "How can I improve?"</p>
+              </div>
+            </div>
+
+            <div class="chat-input-bar">
+              <input type="text" id="chat-input" placeholder="Type your question..." onkeydown="if(event.key==='Enter')sendChat()">
+              <button class="chat-send-btn" onclick="sendChat()">&#x27A4;</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== PAGE: HISTORY ==================== -->
+      <div class="page" id="page-history">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">&#x1F4DC; Evaluation History</div>
+              <div class="card-subtitle">All past proposal evaluations</div>
+            </div>
+            <button class="btn btn-primary" onclick="navigateTo('evaluate')">
+              <span>&#x2795;</span> New Evaluation
+            </button>
+          </div>
+          <table class="data-table" id="full-history-table">
+            <thead>
+              <tr>
+                <th>Proposal</th>
+                <th>Score</th>
+                <th>Status</th>
+                <th>Progress</th>
+                <th>Date</th>
+              </tr>
+            </thead>
+            <tbody id="full-history-tbody">
+            </tbody>
+          </table>
+          <div class="empty-state hidden" id="full-history-empty">
+            <div class="empty-icon">&#x1F4C2;</div>
+            <div class="empty-title">No evaluations yet</div>
+            <div class="empty-desc">Upload your first R&D proposal to get started.</div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /content-area -->
+  </main>
+</div><!-- /app-layout -->
+
+<!-- SPINNER OVERLAY -->
+<div class="spinner-overlay hidden" id="spinner-overlay">
+  <div class="spinner"></div>
+  <div class="spinner-text">Running AI Cognitive Pipeline...</div>
+  <div class="spinner-subtext">Analyzing proposal with Gemini AI</div>
+</div>
+
+<!-- TOAST CONTAINER -->
+<div id="toast-container"></div>
+
+<script src="/static/app.js"></script>
+</body>
+</html>
