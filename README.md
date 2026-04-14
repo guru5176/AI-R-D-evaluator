@@ -1,4 +1,4 @@
-﻿![Python](https://img.shields.io/badge/python-3.9%2B-blue) ![FastAPI](https://img.shields.io/badge/FastAPI-Backend-green) ![Streamlit](https://img.shields.io/badge/Streamlit-UI-orange) ![GitHub license](https://img.shields.io/github/license/kavya1b1/AI_Evaluation)
+﻿![Python](https://img.shields.io/badge/python-3.9%2B-blue) ![FastAPI](https://img.shields.io/badge/FastAPI-Backend-green) ![Streamlit](https://img.shields.io/badge/Streamlit-UI-orange) ![GitHub license](https://img.shields.io/github/license/kavya1b1/AI_Evaluation) [![Hugging Face Model](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Model-yellow)](https://huggingface.co/Guru5176/RandD_evaluator)
 
 # 🚀 AI-Driven Proposal Evaluation & Explainability Suite
 --------------------------------------------------------------------------------------------------------------
@@ -145,7 +145,7 @@ AI_Evaluation/
 │   ├── train_model.py
 │   ├── embedding_model.py
 │   ├── vector_store.py
-│   └── evaluator_model.pkl
+│   └── evaluator_model.pkl (Hosted on Hugging Face)
 ├── data/
 │   └── past_projects.csv
 ├── reports/     # Generated PDFs (ignored in Git)
@@ -197,6 +197,20 @@ reports/
 proposals.db
 *.pkl
 .env
+```
+
+## 🤗 Model Hosting
+--------------------------------------------------------------------------------------------------------------
+The ML model used in this project is hosted on **Hugging Face Hub** using `git-xet`.
+
+**Model Link**: [Guru5176/RandD_evaluator](https://huggingface.co/Guru5176/RandD_evaluator)
+
+### To download/update the model:
+```bash
+# Make sure git-xet is installed (https://hf.co/docs/hub/git-xet)
+git xet install
+
+git clone https://huggingface.co/Guru5176/RandD_evaluator
 ```
 
 ## 🧠 Key Highlights
