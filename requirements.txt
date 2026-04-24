@@ -12,5 +12,8 @@ pandas
 streamlit
 reportlab
 google-generativeai
-
-
+# -- Hugging Face model integration --
+huggingface_hub
+scikit-learn
+joblib
+numpy
