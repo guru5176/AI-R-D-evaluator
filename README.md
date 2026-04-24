@@ -6,16 +6,6 @@ An end-to-end AI-powered decision support system for automated R&D proposal eval
 
 This system evaluates research and innovation proposals using Machine Learning, Explainable AI (XAI), Uncertainty Estimation, and Generative AI, producing transparent scores, confidence estimates, and professional PDF reports.
 
-## Problem Statement
---------------------------------------------------------------------------------------------------------------
-Manual evaluation of R&D and research proposals is often:
-- **Time-consuming**
-- **Subjective and inconsistent**
-- **Lacking transparency**
-- **Poorly documented**
-
-As proposal volumes grow, funding agencies and institutions need a scalable, objective, and explainable evaluation system.
-
 ## Our Solution
 --------------------------------------------------------------------------------------------------------------
 We built an AI Proposal Evaluation System that:
